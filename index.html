@@ -12,7 +12,7 @@
 
 <div id="container">
     <div id="groupNum" style="position: absolute; top: 5%; text-align: center; font-size: 6rem; color: white; z-index: 10;"></div>
-  <img id="catImg">
+  <img id="catImg" draggable="false" oncontextmenu="return false;" style="pointer-events: auto;">
 </div>
 
 <style>
@@ -60,6 +60,11 @@ img {
 
 
 let catAudio;
+// Make image unselectable and disable download
+let catImgDiv = document.getElementById("catImg");
+catImgDiv.setAttribute('draggable', 'false');
+catImgDiv.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+catImgDiv.addEventListener('selectstart', function(e) { e.preventDefault(); });
 
 function catAudioGen(num) {
     catAudio = new Tone.Player(`media/audio/cat${num}.mp3`).toDestination();
@@ -76,7 +81,6 @@ let groupNum = document.getElementById("groupNum");
 
 
 let catImg1, catImg2;
-let catImgDiv = document.getElementById("catImg");
 
 function catLink(num, let, let1) {
     catImg1 = `media/cat${num + let}.png`;
