@@ -114,8 +114,8 @@ if (group === 0) {
     groupNum.innerHTML = 4;
     catImgDiv.style.transform = "scale(0.8)" 
 }
-
-let feedbackDelay = new Tone.FeedbackDelay("0.4n", 1).toDestination();
+let gainNode = new Tone.Gain(1).toDestination();
+let feedbackDelay = new Tone.FeedbackDelay("0.4n", 1).connect(gainNode)
 catAudio.connect(feedbackDelay);
 
 catImgDiv.src = catImg1;
@@ -144,12 +144,14 @@ catImgDiv.addEventListener("touchstart", () => {
  catImgDiv.src = catImg2;
  catAudio.start();
  catAudio.fadeIn = 0.001
+ gainNode.gain.rampTo(1, 0.002)
 })
 
 catImgDiv.addEventListener("touchend", () => {
  catImgDiv.src = catImg1;
  catAudio.fadeOut = 0.005; // tiny fade out
  catAudio.stop();
+ gainNode.gain.rampTo(0, 0.002)
 })
 
 function randomFloat(min, max) {
