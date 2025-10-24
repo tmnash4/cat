@@ -14,6 +14,12 @@
     <div id="groupNum" style="position: absolute; top: 5%; text-align: center; font-size: 6rem; color: white; z-index: 10;"></div>
   <img id="catImg" draggable="false" oncontextmenu="return false;" style="pointer-events: auto;">
 </div>
+<div id="container1"> 
+    <div id="groupNum" style="position: absolute; top: 5%; text-align: center; font-size: 6rem; color: white; z-index: 10;"></div>
+  <img id="catImg" draggable="false" oncontextmenu="return false;" style="pointer-events: auto;">
+  <div id="instructions">Please turn your cellphone volume up and turn silent mode off if on iPhone</div>
+  <button id="catButton">Click to Continue</button>
+</div>
 
 <style>
   html, body {
@@ -29,30 +35,55 @@
   touch-action: none; 
   -webkit-user-select: none;
   user-select: none;
-      -moz-user-select: none;    /* Firefox */
-    -ms-user-select: none;     /* Internet Explorer/Edge */
-    -webkit-touch-callout: none; /* Disable the callout menu on iOS */ 
-    -webkit-tap-highlight-color: transparent; /* iOS-specific */
-    outline: none; /* Optional: also removes the focus outline, if any */
+  -moz-user-select: none;  
+  -ms-user-select: none; 
+  -webkit-touch-callout: none; 
+  -webkit-tap-highlight-color: transparent; /* iOS-specific */
+  outline: none; 
 }
 
-#container {
+#container1 {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* changed */
+  justify-content: center; 
   text-align: center;
+}
 
+#catButton {
+  font-size: 2.8rem;
+  background-color: azure;
+}
+
+#catButton:active {
+  background-color: lightblue;
+}
+
+
+#container {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
+  text-align: center;
+}
+
+#instructions {
+  font-size: 1.5rem;
+  color: black;
+  margin: 20px;
+  margin-bottom: 70px;
 }
 
 img {
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* Internet Explorer/Edge */
+  -moz-user-select: none;    
+  -ms-user-select: none; 
   user-select: none;  
-  -webkit-touch-callout: none; /* Disable the callout menu on iOS */ 
-  -webkit-tap-highlight-color: transparent; /* iOS-specific */
-  outline: none; /* Optional: also removes the focus outline, if any */
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none; 
   background: transparent !important;
 }
 
@@ -61,107 +92,258 @@ img:active {
   box-shadow: none !important;
 }
 
+*,
+*::before,
+*::after,
+html,
+body {
+  cursor: none !important;
+}
 
 </style>
 <script>
 
 
-let catAudio;
-// Make image unselectable and disable download
-let catImgDiv = document.getElementById("catImg");
-catImgDiv.setAttribute('draggable', 'false');
-catImgDiv.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-catImgDiv.addEventListener('selectstart', function(e) { e.preventDefault(); });
-
-function catAudioGen(num) {
-    catAudio = new Tone.Player(`media/audio/cat${num}.mp3`).toDestination();
-}
-
-let group = randomInt(0, 4);
-
-let backgroundColors = ["blue", "red", "orange", "green"];
-
-let container = document.getElementById("container");
-container.style.backgroundColor = backgroundColors[group];
-
-let groupNum = document.getElementById("groupNum");
 
 
 let catImg1, catImg2;
+const catImgDiv = document.getElementById("catImg");
+const container = document.getElementById("container");
+const groupNum  = document.getElementById("groupNum");
+let catButton = document.getElementById("catButton");
+let container1 = document.getElementById("container1");
 
-function catLink(num, let, let1) {
-    catImg1 = `media/cat${num + let}.png`;
-    catImg2 = `media/cat${num + let1}.png`;
-}
+catButton.onclick = function() {
+    container1.style.display = "none";
+    container.style.display = "flex";
+};
 
-if (group === 0) {
-    catLink(1, "a", "b");
-    catAudioGen(group);
-    groupNum.innerHTML = 1;
-} else if (group === 1) {
-    catLink(2, "a", "b");
-    catAudioGen(group);
-    groupNum.innerHTML = 2;
-    catImgDiv.style.transform = "scale(0.9)" 
-} else if (group === 2) {
-    catLink(3, "a", "b");
-    catAudioGen(group);
-    catImgDiv.style.transform = "scale(0.8)" 
-    groupNum.innerHTML = 3;
-} else if (group === 3) {
-    catLink(4, "a", "b");
-    catAudioGen(group);
-    groupNum.innerHTML = 4;
-    catImgDiv.style.transform = "scale(0.8)" 
-}
-let gainNode = new Tone.Gain(1).toDestination();
-let feedbackDelay = new Tone.FeedbackDelay("0.4n", 1).connect(gainNode)
-catAudio.connect(feedbackDelay);
 
+
+document.documentElement.style.cursor = "none";
+document.body.style.cursor = "none";
+
+const backgroundColors  = ["blue", "red", "orange", "green"];
+let group = Math.floor(Math.random() * 4);
+const audioURLs = [
+  "media/audio/cat0.mp3",
+  "media/audio/cat1.mp3",
+  "media/audio/cat2.mp3",
+  "media/audio/cat3.mp3"
+];
+
+const purringURLs = [
+  "media/audio/purr0.mp3",
+  "media/audio/purr1.mp3",
+]
+container.style.backgroundColor = backgroundColors[group];
+function catLink(n, a, b){ catImg1 = `media/cat${n + a}.png`; catImg2 = `media/cat${n + b}.png`; }
+if (group === 0) { catLink(1,"a","b"); groupNum.textContent=1; catImgDiv.style.transform="scale(0.9)"; }
+if (group === 1) { catLink(2,"a","b"); groupNum.textContent=2; catImgDiv.style.transform="scale(0.9)"; }
+if (group === 2) { catLink(3,"a","b"); groupNum.textContent=3; catImgDiv.style.transform="scale(0.8)"; }
+if (group === 3) { catLink(4,"a","b"); groupNum.textContent=4; catImgDiv.style.transform="scale(0.9)"; }
 catImgDiv.src = catImg1;
-let num = 0;
 
-// catImgDiv.addEventListener("click", () => {
+const limiter   = new Tone.Limiter(-1).toDestination(); // safety at -1 dB
+const masterVol = new Tone.Volume(-6).connect(limiter); // 6 dB headroom
+const masterLP  = new Tone.Filter({ frequency: 2400, type: "lowpass", Q: 0 }).connect(masterVol);
 
-//     // if (num === 0) {
-//     catImgDiv.src = catImg2
-//     num = 1
-//     console.log("hello")
-//     // } else if (num === 1) {
-//     setTimeout(() => {
-//         catImgDiv.src = catImg1
-//         num = 0;
-//         console.log("hello1")
-//     }, 100)
 
-//     // }
-// })
-catImgDiv.addEventListener("click", () => {
-     Tone.start()
-})
+const reverb = new Tone.Reverb({ decay: 2.8, preDelay: 0.015, wet: 1 }).connect(masterLP);
+const reverbSend = new Tone.Gain(0).connect(reverb); // we'll fade this in/out
+const delay = new Tone.FeedbackDelay({
+  delayTime: 0.55,   
+  feedback: 0.25,    // how long repeats last
+  wet: 1          // blend
+}).connect(masterLP);
 
-catImgDiv.addEventListener("touchstart", () => {
- catImgDiv.src = catImg2;
- catAudio.start();
- catAudio.fadeIn = 0.001
- gainNode.gain.rampTo(1, 0.002)
-})
 
-catImgDiv.addEventListener("touchend", () => {
- catImgDiv.src = catImg1;
- catAudio.fadeOut = 0.005; // tiny fade out
- catAudio.stop();
- gainNode.gain.rampTo(0, 0.002)
-})
+const SUSTAIN_ATTACK  = 0.22; // seconds: how smooth the held sound fades in
+const SUSTAIN_RELEASE = 0.04; // seconds: quick/clean release without a click
+const DELAY_LEVEL  = 0.25;    // was 0.6
+const REVERB_LEVEL = 0.20;    // was 0.45
 
-function randomFloat(min, max) {
-    return Math.random() * (max - min) + min;
+// Subtle wobble of delay time (no clicks)
+const delayLFO = new Tone.LFO({
+  frequency: 0.05,   // ~one cycle every 12.5s
+  min: 0.24,         // min delay time (seconds)
+  max: 0.92          // max delay time (seconds)
+}).connect(delay.delayTime).start();
+const delaySend = new Tone.Gain(0).connect(delay);
+
+const sustain = new Tone.GrainPlayer({
+  url: audioURLs[group],
+  loop:true,
+  grainSize:5,
+  overlap:0.7,
+  playbackRate:1,
+  fadeIn: 0.1,
+  fadeOut: 0.1
+});
+
+sustain.volume.value = -10;
+const sustainGain = new Tone.Gain(0).connect(masterLP);
+
+sustain.connect(sustainGain);   // main sustain path
+sustain.connect(delaySend);     // delay send (held only)
+sustain.connect(reverbSend);    // reverb send (held only)
+
+const oneShot = new Tone.Player({
+  url: audioURLs[group],
+  loop:false,
+  fadeIn: 0.5,
+  fadeOut: 0.3
+}).connect(masterLP);
+oneShot.volume.value = -8;   // was 0 dB
+
+let isHolding = false;
+let loopPointsSet = false;
+let isSustainPlaying = false;
+let cooldown = false;
+
+const HOLD_THRESHOLD_MS = 800;
+let sustainStartTimeout = null;
+let delayFadeTimeout = null;
+let cooldownTimeout = null;
+
+function setLoopPointsIfReady(){
+  if (loopPointsSet) return;
+  const buf = sustain.buffer;
+  if (!buf || !buf.loaded) return;
+  const d = buf.duration;
+  sustain.loopStart = Math.max(0.05, d * 0.15);
+  sustain.loopEnd   = Math.min(d - 0.05, d * 0.85);
+  loopPointsSet = true;
+}
+sustain.onload = ()=>{ loopPointsSet = false; setLoopPointsIfReady(); };
+
+function clearPending(){
+  if (sustainStartTimeout){ clearTimeout(sustainStartTimeout); sustainStartTimeout = null; }
+  if (delayFadeTimeout){ clearTimeout(delayFadeTimeout); delayFadeTimeout = null; }
 }
 
-function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
+function startOneShot(){
+  if (Tone.context.state !== "running") Tone.start();
+  if (cooldown) return;
+  cooldown = true;
+  oneShot.stop();
+  oneShot.start(Tone.now() + 0.001);
+  cooldownTimeout = setTimeout(()=>{ cooldown = false; }, 120);
 }
 
-</script> 
+function startSustain(){
+  if (isSustainPlaying) return;
+  setLoopPointsIfReady();
+
+  const now = Tone.now();
+  sustain.stop();
+  sustain.start(now + 0.001, sustain.loopStart);
+
+  // Start from zero, then ramp up smoothly
+  sustainGain.gain.cancelScheduledValues(now);
+  sustainGain.gain.setValueAtTime(0, now);
+  sustainGain.gain.linearRampToValueAtTime(1, now + SUSTAIN_ATTACK);
+
+  // Fade in sends (so echoes/reverb bloom in smoothly, too)
+  delaySend.gain.cancelScheduledValues(now);
+  delaySend.gain.setValueAtTime(0, now);
+  delaySend.gain.linearRampToValueAtTime(DELAY_LEVEL, now + SUSTAIN_ATTACK);
+
+  reverbSend.gain.cancelScheduledValues(now);
+  reverbSend.gain.setValueAtTime(0, now);
+  reverbSend.gain.linearRampToValueAtTime(REVERB_LEVEL, now + SUSTAIN_ATTACK);
+
+  // If you want less obvious delay overall, you can also lower delay.wet here
+  // delay.wet.setValueAtTime(0.6, now);
+
+  isSustainPlaying = true;
+}
+
+function stopAllImmediate(){
+  const t = Tone.now();
+
+  // Short ramp down to avoid clicks but keep it snappy
+  sustainGain.gain.cancelScheduledValues(t);
+  sustainGain.gain.linearRampToValueAtTime(0, t + SUSTAIN_RELEASE);
+
+  delaySend.gain.cancelScheduledValues(t);
+  delaySend.gain.linearRampToValueAtTime(0, t + SUSTAIN_RELEASE);
+
+  reverbSend.gain.cancelScheduledValues(t);
+  reverbSend.gain.linearRampToValueAtTime(0, t + SUSTAIN_RELEASE);
+
+  if (isSustainPlaying){
+    sustain.stop(t + SUSTAIN_RELEASE + 0.005);
+    isSustainPlaying = false;
+  }
+}
+
+
+function setActiveVisuals(){ catImgDiv.src = catImg2; }
+function setInactiveVisuals(){ catImgDiv.src = catImg1; }
+
+function onTouchStart(e){
+  if ((e.pointerType||"") !== "touch") return;
+  e.preventDefault();
+  if (catImgDiv.setPointerCapture) catImgDiv.setPointerCapture(e.pointerId);
+  if (!Tone.context.running) Tone.start();
+  isHolding = true;
+  setActiveVisuals();
+  startOneShot();
+  clearPending();
+  sustainStartTimeout = setTimeout(()=>{ if (isHolding) startSustain(); }, HOLD_THRESHOLD_MS);
+}
+
+function onTouchEndLike(e){
+  if ((e.pointerType||"") !== "touch") return;
+  e.preventDefault();
+  if (catImgDiv.releasePointerCapture && e.pointerId != null) {
+    try { catImgDiv.releasePointerCapture(e.pointerId); } catch(_) {}
+  }
+  isHolding = false;
+  clearPending();
+  stopAllImmediate();
+  setInactiveVisuals();
+}
+
+let isPurring = false;
+
+function switchToPurr() {
+  if (isPurring) return;
+  isPurring = true;
+
+  // pick a random purr file
+  const nextURL = purringURLs[Math.floor(Math.random() * purringURLs.length)];
+
+  // fade out current sustain, then swap buffer
+  const now = Tone.now();
+  sustainGain.gain.cancelScheduledValues(now);
+  sustainGain.gain.linearRampToValueAtTime(0, now + 0.5);
+
+setTimeout(() => {
+  // Create a new buffer for the purr file, then swap it in
+  const newBuf = new Tone.ToneAudioBuffer(nextURL, () => {
+    const now = Tone.now();
+    sustain.stop(now);              // stop current grain loop
+    sustain.buffer = newBuf;        // swap buffer (no .load needed)
+    loopPointsSet = false;
+    setLoopPointsIfReady();         // re-set loop points for the new file
+    if (isHolding) startSustain();  // resume if still holding
+  });
+}, 600);
+
+}
+
+setTimeout(switchToPurr, 30000); // 30 seconds
+
+
+catImgDiv.addEventListener("pointerdown",   onTouchStart,   {passive:false});
+catImgDiv.addEventListener("pointerup",     onTouchEndLike, {passive:false});
+catImgDiv.addEventListener("pointercancel", onTouchEndLike, {passive:false});
+catImgDiv.addEventListener("pointerleave",  (e)=>{ if (isHolding) onTouchEndLike(e); }, {passive:false});
+</script>
+
+
+
 </body>
 </html>
