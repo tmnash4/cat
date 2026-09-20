@@ -144,30 +144,29 @@ if (group === 2) { catLink(3,"a","b"); groupNum.textContent=3; catImgDiv.style.t
 if (group === 3) { catLink(4,"a","b"); groupNum.textContent=4; catImgDiv.style.transform="scale(0.9)"; }
 catImgDiv.src = catImg1;
 
-const limiter   = new Tone.Limiter(-1).toDestination(); // safety at -1 dB
-const masterVol = new Tone.Volume(-6).connect(limiter); // 6 dB headroom
+const limiter   = new Tone.Limiter(-1).toDestination(); 
+const masterVol = new Tone.Volume(-6).connect(limiter); 
 const masterLP  = new Tone.Filter({ frequency: 2400, type: "lowpass", Q: 0 }).connect(masterVol);
 
 
 const reverb = new Tone.Reverb({ decay: 2.8, preDelay: 0.015, wet: 1 }).connect(masterLP);
-const reverbSend = new Tone.Gain(0).connect(reverb); // we'll fade this in/out
+const reverbSend = new Tone.Gain(0).connect(reverb); 
 const delay = new Tone.FeedbackDelay({
   delayTime: 0.55,   
-  feedback: 0.25,    // how long repeats last
-  wet: 1          // blend
+  feedback: 0.25,   
+  wet: 1         
 }).connect(masterLP);
 
 
-const SUSTAIN_ATTACK  = 0.22; // seconds: how smooth the held sound fades in
-const SUSTAIN_RELEASE = 0.04; // seconds: quick/clean release without a click
-const DELAY_LEVEL  = 0.25;    // was 0.6
-const REVERB_LEVEL = 0.20;    // was 0.45
+const SUSTAIN_ATTACK  = 0.22; 
+const SUSTAIN_RELEASE = 0.04; 
+const DELAY_LEVEL  = 0.25;    
+const REVERB_LEVEL = 0.20;    
 
-// Subtle wobble of delay time (no clicks)
 const delayLFO = new Tone.LFO({
-  frequency: 0.05,   // ~one cycle every 12.5s
-  min: 0.24,         // min delay time (seconds)
-  max: 0.92          // max delay time (seconds)
+  frequency: 0.05,  
+  min: 0.24,        
+  max: 0.92         
 }).connect(delay.delayTime).start();
 const delaySend = new Tone.Gain(0).connect(delay);
 
@@ -184,9 +183,9 @@ const sustain = new Tone.GrainPlayer({
 sustain.volume.value = -10;
 const sustainGain = new Tone.Gain(0).connect(masterLP);
 
-sustain.connect(sustainGain);   // main sustain path
-sustain.connect(delaySend);     // delay send (held only)
-sustain.connect(reverbSend);    // reverb send (held only)
+sustain.connect(sustainGain);  
+sustain.connect(delaySend);     
+sustain.connect(reverbSend);    
 
 const oneShot = new Tone.Player({
   url: audioURLs[group],
@@ -194,7 +193,7 @@ const oneShot = new Tone.Player({
   fadeIn: 0.5,
   fadeOut: 0.3
 }).connect(masterLP);
-oneShot.volume.value = -8;   // was 0 dB
+oneShot.volume.value = -8;  
 
 let isHolding = false;
 let loopPointsSet = false;
@@ -239,12 +238,10 @@ function startSustain(){
   sustain.stop();
   sustain.start(now + 0.001, sustain.loopStart);
 
-  // Start from zero, then ramp up smoothly
   sustainGain.gain.cancelScheduledValues(now);
   sustainGain.gain.setValueAtTime(0, now);
   sustainGain.gain.linearRampToValueAtTime(1, now + SUSTAIN_ATTACK);
 
-  // Fade in sends (so echoes/reverb bloom in smoothly, too)
   delaySend.gain.cancelScheduledValues(now);
   delaySend.gain.setValueAtTime(0, now);
   delaySend.gain.linearRampToValueAtTime(DELAY_LEVEL, now + SUSTAIN_ATTACK);
@@ -253,16 +250,12 @@ function startSustain(){
   reverbSend.gain.setValueAtTime(0, now);
   reverbSend.gain.linearRampToValueAtTime(REVERB_LEVEL, now + SUSTAIN_ATTACK);
 
-  // If you want less obvious delay overall, you can also lower delay.wet here
-  // delay.wet.setValueAtTime(0.6, now);
-
   isSustainPlaying = true;
 }
 
 function stopAllImmediate(){
   const t = Tone.now();
 
-  // Short ramp down to avoid clicks but keep it snappy
   sustainGain.gain.cancelScheduledValues(t);
   sustainGain.gain.linearRampToValueAtTime(0, t + SUSTAIN_RELEASE);
 
@@ -312,29 +305,26 @@ function switchToPurr() {
   if (isPurring) return;
   isPurring = true;
 
-  // pick a random purr file
   const nextURL = purringURLs[Math.floor(Math.random() * purringURLs.length)];
 
-  // fade out current sustain, then swap buffer
   const now = Tone.now();
   sustainGain.gain.cancelScheduledValues(now);
   sustainGain.gain.linearRampToValueAtTime(0, now + 0.5);
 
 setTimeout(() => {
-  // Create a new buffer for the purr file, then swap it in
   const newBuf = new Tone.ToneAudioBuffer(nextURL, () => {
     const now = Tone.now();
-    sustain.stop(now);              // stop current grain loop
-    sustain.buffer = newBuf;        // swap buffer (no .load needed)
+    sustain.stop(now);             
+    sustain.buffer = newBuf;       
     loopPointsSet = false;
-    setLoopPointsIfReady();         // re-set loop points for the new file
-    if (isHolding) startSustain();  // resume if still holding
+    setLoopPointsIfReady();    
+    if (isHolding) startSustain(); 
   });
 }, 600);
 
 }
 
-setTimeout(switchToPurr, 200000); // 30 seconds
+setTimeout(switchToPurr, 200000);
 
 
 catImgDiv.addEventListener("pointerdown",   onTouchStart,   {passive:false});
@@ -342,8 +332,6 @@ catImgDiv.addEventListener("pointerup",     onTouchEndLike, {passive:false});
 catImgDiv.addEventListener("pointercancel", onTouchEndLike, {passive:false});
 catImgDiv.addEventListener("pointerleave",  (e)=>{ if (isHolding) onTouchEndLike(e); }, {passive:false});
 </script>
-
-
 
 </body>
 </html>
